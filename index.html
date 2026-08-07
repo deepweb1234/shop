@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Sitio en mantenimiento</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #050816;
+            --cyan: #00e5ff;
+            --blue: #5865ff;
+            --purple: #a855f7;
+            --white: #ffffff;
+            --muted: #9ca8c7;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: Inter, "Segoe UI", Arial, sans-serif;
+            background: var(--bg);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* FONDO */
+
+        .background {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            z-index: -2;
+        }
+
+        .background::before {
+            content: "";
+            position: absolute;
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(
+                circle,
+                rgba(0, 229, 255, .18),
+                transparent 65%
+            );
+            top: -300px;
+            left: -200px;
+            filter: blur(20px);
+        }
+
+        .background::after {
+            content: "";
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(
+                circle,
+                rgba(168, 85, 247, .17),
+                transparent 65%
+            );
+            bottom: -400px;
+            right: -250px;
+            filter: blur(30px);
+        }
+
+        /* GRID */
+
+        .grid {
+            position: absolute;
+            inset: 0;
+            opacity: .18;
+            background-image:
+                linear-gradient(rgba(255,255,255,.06) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px);
+            background-size: 50px 50px;
+            mask-image: linear-gradient(
+                to bottom,
+                transparent,
+                black 25%,
+                black 75%,
+                transparent
+            );
+        }
+
+        /* PARTICULAS */
+
+        .particles span {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: #fff;
+            border-radius: 50%;
+            opacity: .5;
+            animation: float 8s infinite ease-in-out;
+        }
+
+        .particles span:nth-child(1) {
+            left: 10%;
+            top: 20%;
+            animation-delay: 1s;
+        }
+
+        .particles span:nth-child(2) {
+            left: 25%;
+            top: 70%;
+            animation-delay: 3s;
+        }
+
+        .particles span:nth-child(3) {
+            left: 80%;
+            top: 25%;
+            animation-delay: 2s;
+        }
+
+        .particles span:nth-child(4) {
+            left: 90%;
+            top: 65%;
+            animation-delay: 4s;
+        }
+
+        .particles span:nth-child(5) {
+            left: 60%;
+            top: 12%;
+            animation-delay: 5s;
+        }
+
+        .particles span:nth-child(6) {
+            left: 45%;
+            top: 85%;
+            animation-delay: 2s;
+        }
+
+        @keyframes float {
+            0%,100% {
+                transform: translateY(0);
+                opacity: .2;
+            }
+
+            50% {
+                transform: translateY(-35px);
+                opacity: .8;
+            }
+        }
+
+        /* CONTENEDOR */
+
+        .container {
+            width: min(1100px, 92%);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 70px;
+            align-items: center;
+        }
+
+        /* TEXTO */
+
+        .content {
+            animation: appear .9s ease forwards;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 9px 15px;
+            border-radius: 50px;
+            background: rgba(0, 229, 255, .08);
+            border: 1px solid rgba(0, 229, 255, .25);
+            color: var(--cyan);
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: .5px;
+            margin-bottom: 25px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--cyan);
+            border-radius: 50%;
+            box-shadow: 0 0 12px var(--cyan);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%,100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(.65);
+                opacity: .45;
+            }
+        }
+
+        h1 {
+            font-size: clamp(48px, 6vw, 78px);
+            line-height: .95;
+            letter-spacing: -4px;
+            margin-bottom: 25px;
+        }
+
+        h1 span {
+            background: linear-gradient(
+                90deg,
+                var(--cyan),
+                #7280ff,
+                var(--purple)
+            );
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .description {
+            max-width: 520px;
+            color: var(--muted);
+            font-size: 18px;
+            line-height: 1.7;
+            margin-bottom: 30px;
+        }
+
+        .info {
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #dce3f5;
+            font-size: 14px;
+        }
+
+        .info-item .icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            background: rgba(255,255,255,.06);
+            border: 1px solid rgba(255,255,255,.08);
+            font-size: 18px;
+        }
+
+        /* ILUSTRACION */
+
+        .visual {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 480px;
+        }
+
+        .orb {
+            position: absolute;
+            width: 370px;
+            height: 370px;
+            border-radius: 50%;
+            background: radial-gradient(
+                circle at 35% 30%,
+                rgba(0,229,255,.18),
+                rgba(88,101,255,.08) 40%,
+                rgba(168,85,247,.04) 65%,
+                transparent 70%
+            );
+            box-shadow:
+                0 0 100px rgba(0,229,255,.08),
+                inset 0 0 80px rgba(168,85,247,.05);
+            animation: breathe 5s infinite ease-in-out;
+        }
+
+        @keyframes breathe {
+            0%,100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.06);
+            }
+        }
+
+        .ring {
+            position: absolute;
+            border: 1px solid rgba(0,229,255,.18);
+            border-radius: 50%;
+        }
+
+        .ring.one {
+            width: 420px;
+            height: 420px;
+            animation: rotate 20s linear infinite;
+        }
+
+        .ring.two {
+            width: 310px;
+            height: 310px;
+            border-color: rgba(168,85,247,.2);
+            animation: rotateReverse 15s linear infinite;
+        }
+
+        @keyframes rotate {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes rotateReverse {
+            to {
+                transform: rotate(-360deg);
+            }
+        }
+
+        .server {
+            position: relative;
+            width: 230px;
+            padding: 22px;
+            border-radius: 24px;
+            background: rgba(12,18,40,.75);
+            border: 1px solid rgba(255,255,255,.12);
+            backdrop-filter: blur(20px);
+            box-shadow:
+                0 30px 80px rgba(0,0,0,.45),
+                0 0 50px rgba(0,229,255,.08);
+            transform: perspective(800px) rotateY(-8deg) rotateX(5deg);
+        }
+
+        .server-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 18px;
+            color: #8490ae;
+            font-size: 12px;
+        }
+
+        .server-dots {
+            display: flex;
+            gap: 5px;
+        }
+
+        .server-dots i {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #39425d;
+        }
+
+        .server-dots i:first-child {
+            background: #ff6b6b;
+        }
+
+        .server-dots i:nth-child(2) {
+            background: #ffd166;
+        }
+
+        .server-dots i:nth-child(3) {
+            background: #06d6a0;
+        }
+
+        .server-row {
+            height: 58px;
+            margin: 10px 0;
+            padding: 0 15px;
+            border-radius: 13px;
+            background: rgba(255,255,255,.045);
+            border: 1px solid rgba(255,255,255,.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .server-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .server-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 9px;
+            background: linear-gradient(135deg, #00e5ff, #5865ff);
+            display: grid;
+            place-items: center;
+            font-size: 14px;
+        }
+
+        .server-line {
+            width: 65px;
+            height: 5px;
+            border-radius: 10px;
+            background: #29324c;
+        }
+
+        .server-line.short {
+            width: 38px;
+            margin-top: 6px;
+        }
+
+        .loading {
+            width: 35px;
+            height: 6px;
+            border-radius: 10px;
+            background: #2c3653;
+            overflow: hidden;
+        }
+
+        .loading::after {
+            content: "";
+            display: block;
+            height: 100%;
+            width: 60%;
+            background: var(--cyan);
+            box-shadow: 0 0 10px var(--cyan);
+            animation: loading 2s infinite;
+        }
+
+        @keyframes loading {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(180%); }
+        }
+
+        /* TUERCA */
+
+        .gear {
+            position: absolute;
+            font-size: 90px;
+            filter: drop-shadow(0 0 20px rgba(0,229,255,.3));
+            animation: gearRotate 12s linear infinite;
+        }
+
+        .gear.one {
+            top: 60px;
+            right: 30px;
+            color: rgba(0,229,255,.8);
+        }
+
+        .gear.two {
+            bottom: 60px;
+            left: 35px;
+            font-size: 55px;
+            color: rgba(168,85,247,.75);
+            animation-direction: reverse;
+        }
+
+        @keyframes gearRotate {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* FOOTER */
+
+        .footer {
+            position: fixed;
+            bottom: 25px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: #59647e;
+            font-size: 12px;
+        }
+
+        /* ENTRADA */
+
+        @keyframes appear {
+            from {
+                opacity: 0;
+                transform: translateY(25px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 800px) {
+
+            body {
+                overflow-y: auto;
+            }
+
+            .container {
+                grid-template-columns: 1fr;
+                gap: 10px;
+                padding: 50px 0 80px;
+                text-align: center;
+            }
+
+            .content {
+                order: 1;
+            }
+
+            .visual {
+                order: 2;
+                height: 360px;
+                transform: scale(.8);
+            }
+
+            .description {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .info {
+                justify-content: center;
+            }
+
+            .badge {
+                margin-bottom: 20px;
+            }
+
+            h1 {
+                letter-spacing: -3px;
+            }
+        }
+
+        @media (max-width: 450px) {
+
+            h1 {
+                font-size: 48px;
+            }
+
+            .description {
+                font-size: 16px;
+            }
+
+            .visual {
+                transform: scale(.65);
+                margin-top: -20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="background">
+        <div class="grid"></div>
+
+        <div class="particles">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+
+    <main class="container">
+
+        <section class="content">
+
+            <div class="badge">
+                <span class="status-dot"></span>
+                MANTENIMIENTO EN CURSO
+            </div>
+
+            <h1>
+                Volveremos<br>
+                <span>muy pronto.</span>
+            </h1>
+
+            <p class="description">
+                Estamos realizando algunas mejoras para ofrecerte
+                una experiencia más rápida, segura y agradable.
+                El sitio estará disponible nuevamente en breve.
+            </p>
+
+            <div class="info">
+
+                <div class="info-item">
+                    <div class="icon">⚙️</div>
+                    <span>Optimizando el sistema</span>
+                </div>
+
+                <div class="info-item">
+                    <div class="icon">🛡️</div>
+                    <span>Mejorando la seguridad</span>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section class="visual">
+
+            <div class="orb"></div>
+
+            <div class="ring one"></div>
+            <div class="ring two"></div>
+
+            <div class="gear one">⚙</div>
+            <div class="gear two">⚙</div>
+
+            <div class="server">
+
+                <div class="server-header">
+                    <span>SYSTEM STATUS</span>
+
+                    <div class="server-dots">
+                        <i></i>
+                        <i></i>
+                        <i></i>
+                    </div>
+                </div>
+
+                <div class="server-row">
+
+                    <div class="server-left">
+                        <div class="server-icon">☁</div>
+
+                        <div>
+                            <div class="server-line"></div>
+                            <div class="server-line short"></div>
+                        </div>
+                    </div>
+
+                    <div class="loading"></div>
+
+                </div>
+
+                <div class="server-row">
+
+                    <div class="server-left">
+                        <div class="server-icon">⚡</div>
+
+                        <div>
+                            <div class="server-line"></div>
+                            <div class="server-line short"></div>
+                        </div>
+                    </div>
+
+                    <div class="loading"></div>
+
+                </div>
+
+                <div class="server-row">
+
+                    <div class="server-left">
+                        <div class="server-icon">🔒</div>
+
+                        <div>
+                            <div class="server-line"></div>
+                            <div class="server-line short"></div>
+                        </div>
+                    </div>
+
+                    <div class="loading"></div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <div class="footer">
+        © 2026 · Estamos trabajando para mejorar tu experiencia
+    </div>
+
+</body>
+</html>
