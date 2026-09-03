@@ -1,0 +1,642 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Derecho de Petición - RUI</title>
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: #eef1f5;
+        font-family: Arial, Helvetica, sans-serif;
+        color: #111;
+      }
+
+      .toolbar {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: #fff;
+        border-bottom: 1px solid #ccc;
+        padding: 14px;
+        text-align: center;
+        box-shadow: 0 2px 8px #0001;
+      }
+
+      .toolbar button {
+        border: 0;
+        border-radius: 6px;
+        padding: 11px 18px;
+        margin: 0 5px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      .print {
+        background: #1769aa;
+        color: white;
+      }
+
+      .clear {
+        background: #e9ecef;
+        color: #222;
+      }
+
+      .page {
+        width: 216mm;
+        min-height: 279mm;
+        margin: 20px auto;
+        padding: var(--margen-vertical) var(--margen-horizontal);
+        background: #fff;
+        box-shadow: 0 2px 15px #0002;
+
+        --margen-vertical: 10mm;
+        --margen-horizontal: 10mm;
+      }
+
+      h1 {
+        font-size: 16px;
+        text-align: center;
+        margin: 0 0 22px;
+        font-weight: 700;
+      }
+
+      .dest {
+        line-height: 1.5;
+        margin-bottom: 16px;
+      }
+
+      p,
+      li {
+        /* Arial 10 */
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 10pt;
+        line-height: 1.55;
+        text-align: justify;
+      }
+
+      .subject {
+        font-weight: bold;
+      }
+
+      ol {
+        padding-left: 25px;
+      }
+
+      li {
+        padding-left: 5px;
+        margin-bottom: 8px;
+      }
+
+      ul {
+        padding-left: 25px;
+      }
+
+      .signature {
+        margin-top: 28px;
+      }
+
+      .line {
+        width: 230px;
+        border-top: 1px solid #111;
+        margin-top: 42px;
+        margin-bottom: 8px;
+      }
+
+      .editable {
+        font-weight: 700;
+      }
+
+      .form-panel {
+        max-width: 216mm;
+        margin: 20px auto 0;
+        background: white;
+        padding: 18px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px #0001;
+      }
+
+      .form-panel h2 {
+        font-size: 16px;
+        margin: 0 0 14px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      label {
+        font-size: 12px;
+        font-weight: bold;
+        display: block;
+      }
+
+      input,
+      select,
+      textarea {
+        width: 100%;
+        padding: 9px;
+        margin-top: 5px;
+        border: 1px solid #aaa;
+        border-radius: 5px;
+        font-size: 14px;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      textarea {
+        resize: vertical;
+        line-height: 1.45;
+      }
+
+      .wide {
+        grid-column: 1/-1;
+      }
+
+      @media (max-width: 800px) {
+        .page {
+          margin: 0;
+          width: 216mm;
+          min-height: 279mm;
+          box-shadow: none;
+
+          padding-top: var(--margen-vertical);
+          padding-bottom: var(--margen-vertical);
+          padding-left: var(--margen-horizontal);
+          padding-right: var(--margen-horizontal);
+        }
+
+        .grid {
+          grid-template-columns: 1fr;
+        }
+
+        .wide {
+          grid-column: auto;
+        }
+      }
+
+      @media print {
+        body {
+          background: white;
+        }
+
+        .toolbar,
+        .form-panel {
+          display: none !important;
+        }
+
+        .page {
+          margin: 0;
+          width: 216mm;
+          min-height: 279mm;
+          box-shadow: none;
+
+          padding-top: var(--margen-vertical);
+          padding-bottom: var(--margen-vertical);
+          padding-left: var(--margen-horizontal);
+          padding-right: var(--margen-horizontal);
+        }
+
+        @page {
+          size: Letter;
+          margin: 0;
+        }
+      }
+
+      .compacto .signature {
+        margin-top: 12px;
+      }
+
+      .compacto .line {
+        margin-top: 25px;
+        margin-bottom: 5px;
+      }
+
+      .compacto p[style] {
+        margin-top: 10px !important;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="toolbar">
+      <button class="print" onclick="window.print()">
+        🖨️ Imprimir derecho de petición
+      </button>
+
+      <button class="clear" onclick="limpiar()">Limpiar formulario</button>
+
+      <span id="estado" style="font-size: 12px; color: #555; margin-left: 8px">
+        ✓ Actualización automática activa
+      </span>
+    </div>
+
+    <div class="form-panel">
+      <h2>Datos editables</h2>
+
+      <p style="margin: 0 0 12px; color: #555; font-size: 13px">
+        Los cambios se reflejan inmediatamente en el documento. En
+        <b>Hechos</b> y <b>Peticiones</b>, escribe un elemento por línea.
+      </p>
+
+      <div class="grid">
+        <div>
+          <label>
+            Nombre completo
+            <input
+              id="nombre"
+              value=""
+              placeholder="Ingrese su nombre completo"
+            />
+          </label>
+        </div>
+
+        <div>
+          <label>
+            Número de cédula
+            <input id="cedula" value="" placeholder="Numero de cédula" />
+          </label>
+        </div>
+
+        <div>
+          <label>
+            Municipio
+            <input id="municipio" value="Cereté" />
+          </label>
+        </div>
+
+        <div>
+          <label>
+            Departamento
+            <input id="departamento" value="Córdoba" />
+          </label>
+        </div>
+
+        <div>
+          <label>
+            Clasificación RUI
+            <input
+              id="clasificacion"
+              value=""
+              placeholder="Ingrese la clasificación RUI"
+            />
+          </label>
+        </div>
+
+        <div>
+          <label>
+            Número de celular
+            <input
+              id="celular"
+              value=""
+              placeholder="Ingrese su número de celular"
+            />
+          </label>
+        </div>
+
+        <div class="wide">
+          <label>
+            Correo electrónico
+            <input
+              id="correo"
+              value=""
+              placeholder="Ingrese su correo electrónico"
+            />
+          </label>
+        </div>
+
+        <div class="wide">
+          <label>
+            Hechos (puedes modificar, eliminar o agregar hechos)
+
+            <textarea id="hechos" rows="10">
+1. Actualmente aparezco registrada en el sistema con una clasificación C9.
+2. No estoy conforme con dicha clasificación, debido a que considero que mi hogar se encuentra en condiciones de vulnerabilidad extrema, ya que no cuento con un empleo formal ni ingresos fijos.
+3. Considero necesario que se verifique la información que actualmente aparece asociada a mi identificación dentro de las bases de datos utilizadas para establecer mi clasificación.
+4. En caso de que la clasificación haya sido determinada utilizando información proveniente de registros administrativos, solicito que se revise si dichos datos corresponden efectivamente a mi situación económica real y actual.
+5. Habitamos en una zona de alto riesgo, a la orilla de un caño, y convivo con mi esposo y mi hija menor de edad.</textarea
+            >
+          </label>
+        </div>
+
+        <div class="wide">
+          <label>
+            Peticiones (puedes modificar, eliminar o agregar peticiones)
+
+            <textarea id="peticiones" rows="8">
+PRIMERA. Que se realice una revisión detallada de mi clasificación actual en el Registro Universal de Ingresos (RUI), teniendo en cuenta las condiciones reales de vulnerabilidad descritas.
+SEGUNDA. Que se verifique y actualice la información socioeconómica y de ingresos que se encuentra asociada a mi documento de identidad, la cual fue utilizada para determinar mi clasificación actual.</textarea
+            >
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <main class="page" id="documento">
+      <h1>
+        DERECHO DE PETICIÓN - SOLICITUD DE REVISIÓN DE CLASIFICACIÓN EN EL
+        REGISTRO UNIVERSAL DE INGRESOS (RUI)
+      </h1>
+
+      <div class="dest">
+        <b>Señores</b><br />
+        <b>DEPARTAMENTO NACIONAL DE PLANEACIÓN – DNP</b><br />
+        Atención al Ciudadano / Registro Universal de Ingresos — RUI<br />
+        Bogotá D.C.<br />
+        Correo: servicioalciudadano@dnp.gov.co
+      </div>
+
+      <p class="subject">
+        <b>Asunto:</b><br />
+        Derecho de petición - Solicitud de revisión de clasificación en el RUI y
+        verificación de la información socioeconómica registrada.
+      </p>
+
+      <p>
+        Yo, <span class="editable" id="vNombre"></span>, identificada con cédula
+        de ciudadanía No. <span class="editable" id="vCedula"></span>, residente
+        en el municipio de <span class="editable" id="vMunicipio"></span>,
+        <span class="editable" id="vDepartamento"></span>. Respetuosamente
+        solicito al Departamento Nacional de Planeación la revisión de mi
+        clasificación en el Registro Universal de Ingresos (RUI) donde poseo
+        actualmente la categoría
+        <span class="editable" id="vClasificacion"></span>. Lo anterior, debido
+        a que no me encuentro conforme con el resultado actualmente registrado y
+        considero que este no refleja adecuadamente mi situación económica
+        actual ni las condiciones reales de mi hogar.
+      </p>
+
+      <p><b>HECHOS</b></p>
+      <ol id="vHechos"></ol>
+
+      <p><b>PETICIONES</b></p>
+      <ul id="vPeticiones"></ul>
+
+      <p class="signature">Atentamente.</p>
+
+      <div class="line"></div>
+
+      <b id="firmaNombre"></b><br />
+      <span>Firma</span>
+
+      <p style="margin-top: 22px">
+        <b>Celular:</b>
+        <span class="editable" id="vCelular"></span><br />
+
+        <b>Correo electrónico:</b>
+        <span class="editable" id="vCorreo"></span>
+      </p>
+    </main>
+
+    <script>
+      const campos = [
+        "nombre",
+        "cedula",
+        "municipio",
+        "departamento",
+        "clasificacion",
+        "celular",
+        "correo",
+        "hechos",
+        "peticiones",
+      ];
+
+      /*
+       * Ajusta automáticamente los márgenes superior e inferior.
+       *
+       * 1 cm = margen inicial.
+       * A medida que aumenta el contenido, el margen se reduce.
+       * Mínimo: 0.3 cm.
+       */
+      function ajustarMargenes() {
+        const documento = document.getElementById("documento");
+
+        const margenInicial = 10; // 1 cm
+        const margenMinimo = 3; // 0.3 cm
+
+        /*
+         * Creamos una copia temporal para medir
+         * únicamente el contenido real.
+         */
+        const copia = documento.cloneNode(true);
+
+        copia.style.position = "absolute";
+        copia.style.visibility = "hidden";
+        copia.style.left = "-99999px";
+        copia.style.top = "0";
+
+        copia.style.width = "216mm";
+        copia.style.minHeight = "0";
+        copia.style.height = "auto";
+
+        /*
+         * Primero medimos con márgenes pequeños.
+         * Esto permite saber cuánto espacio ocupa
+         * realmente el contenido.
+         */
+        copia.style.padding = `${margenMinimo}mm`;
+
+        document.body.appendChild(copia);
+
+        const alturaContenido = copia.scrollHeight * 0.264583;
+
+        document.body.removeChild(copia);
+
+        const alturaPagina = 279;
+
+        /*
+         * Espacio que realmente necesita el contenido.
+         */
+        const espacioNecesario = alturaContenido + margenInicial * 2;
+
+        let margenVertical = margenInicial;
+        let margenHorizontal = margenInicial;
+
+        /*
+         * Si el contenido no cabe cómodamente,
+         * reducimos progresivamente los márgenes.
+         */
+        if (espacioNecesario > alturaPagina) {
+          const exceso = espacioNecesario - alturaPagina;
+
+          const reduccion = exceso / 2;
+
+          margenVertical = margenInicial - reduccion;
+
+          margenVertical = Math.max(margenMinimo, margenVertical);
+        }
+
+        /*
+         * Cantidad de texto de Hechos y Peticiones.
+         * Al aumentar el texto también reducimos
+         * ligeramente los márgenes laterales.
+         */
+        const hechos = document.getElementById("hechos").value.length;
+
+        const peticiones = document.getElementById("peticiones").value.length;
+
+        const totalTexto = hechos + peticiones;
+
+        if (totalTexto > 700) {
+          const reduccionHorizontal = Math.min(7, (totalTexto - 700) / 350);
+
+          margenHorizontal = margenInicial - reduccionHorizontal;
+        }
+
+        margenHorizontal = Math.max(margenMinimo, margenHorizontal);
+
+        /*
+         * Aplicar márgenes.
+         */
+        documento.style.setProperty(
+          "--margen-vertical",
+          margenVertical.toFixed(2) + "mm",
+        );
+
+        documento.style.setProperty(
+          "--margen-horizontal",
+          margenHorizontal.toFixed(2) + "mm",
+        );
+
+        if (margenVertical <= 5) {
+          documento.classList.add("compacto");
+        } else {
+          documento.classList.remove("compacto");
+        }
+      }
+
+      function actualizarLista(texto) {
+        return texto
+          .split(/\n+/)
+          .map((x) => x.trim())
+          .filter(Boolean)
+          .map((x) => {
+            return x
+              .replace(/^\d+[.)]\s*/, "")
+              .replace(
+                /^(PRIMERA|SEGUNDA|TERCERA|CUARTA|QUINTA|SEXTA|SÉPTIMA|OCTAVA|NOVENA|DÉCIMA)\.\s*/i,
+                "",
+              );
+          });
+      }
+
+      function actualizarClasificacionEnHecho() {
+        const clasificacion = document
+          .getElementById("clasificacion")
+          .value.trim();
+        const hechos = document.getElementById("hechos");
+
+        const lineas = hechos.value.split("\n");
+
+        if (lineas.length > 0 && clasificacion) {
+          lineas[0] = lineas[0].replace(
+            /(clasificación\s+)[^.,\s]+/i,
+            `$1${clasificacion}`,
+          );
+
+          hechos.value = lineas.join("\n");
+        }
+      }
+
+      function actualizar() {
+        actualizarClasificacionEnHecho();
+
+        document.getElementById("vNombre").textContent =
+          document.getElementById("nombre").value;
+
+        document.getElementById("vCedula").textContent =
+          document.getElementById("cedula").value;
+
+        document.getElementById("vMunicipio").textContent =
+          document.getElementById("municipio").value;
+
+        document.getElementById("vDepartamento").textContent =
+          document.getElementById("departamento").value;
+
+        document.getElementById("vClasificacion").textContent =
+          document.getElementById("clasificacion").value;
+
+        document.getElementById("vCelular").textContent =
+          document.getElementById("celular").value;
+
+        document.getElementById("vCorreo").textContent =
+          document.getElementById("correo").value;
+
+        document.getElementById("firmaNombre").textContent =
+          document.getElementById("nombre").value;
+
+        // Renderizar Hechos
+        const hechos = actualizarLista(document.getElementById("hechos").value);
+
+        const contHechos = document.getElementById("vHechos");
+
+        contHechos.innerHTML = "";
+
+        hechos.forEach((item) => {
+          const li = document.createElement("li");
+          li.textContent = item;
+          contHechos.appendChild(li);
+        });
+
+        // Renderizar Peticiones
+        const peticiones = actualizarLista(
+          document.getElementById("peticiones").value,
+        );
+
+        const contPeticiones = document.getElementById("vPeticiones");
+
+        contPeticiones.innerHTML = "";
+
+        peticiones.forEach((item, index) => {
+          const li = document.createElement("li");
+
+          const prefijos = [
+            "PRIMERA",
+            "SEGUNDA",
+            "TERCERA",
+            "CUARTA",
+            "QUINTA",
+            "SEXTA",
+            "SÉPTIMA",
+            "OCTAVA",
+            "NOVENA",
+            "DÉCIMA",
+          ];
+
+          const prefijo = prefijos[index]
+            ? `${prefijos[index]}. `
+            : `${index + 1}. `;
+
+          li.innerHTML = `<b>${prefijo}</b>${item}`;
+
+          contPeticiones.appendChild(li);
+        });
+
+        // Ajustar márgenes después de actualizar el contenido
+        requestAnimationFrame(ajustarMargenes);
+      }
+
+      function limpiar() {
+        campos.forEach((id) => {
+          document.getElementById(id).value = "";
+        });
+
+        actualizar();
+      }
+
+      // Actualización automática
+      campos.forEach((id) => {
+        document.getElementById(id).addEventListener("input", actualizar);
+      });
+
+      // Inicializar
+      actualizar();
+    </script>
+  </body>
+</html>
